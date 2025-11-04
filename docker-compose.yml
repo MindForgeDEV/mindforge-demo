@@ -4,7 +4,7 @@ services:
     restart: always
     env_file: .env
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -12,9 +12,26 @@ services:
     build: mindforge-be
     env_file: .env
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT}:8080"
     depends_on:
       - db
+    networks:
+      - app-network
+
+  frontend:
+    build: ./mindforge-fe
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    environment:
+      VITE_API_URL: "http://backend:${BACKEND_PORT}"  # Backend im Compose-Netzwerk erreichbar
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
 volumes:
   pgdata:
+
+networks:
+  app-network:
+    driver: bridge
