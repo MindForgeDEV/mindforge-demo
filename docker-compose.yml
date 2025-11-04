@@ -9,7 +9,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   backend:
-    build: .
+    build: mindforge-be
     env_file: .env
     ports:
       - "8080:8080"
