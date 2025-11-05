@@ -21,7 +21,7 @@ services:
   frontend:
     build: ./mindforge-fe
     ports:
-      - "${FRONTEND_PORT}:3000"
+      - "${FRONTEND_PORT}:80"
     environment:
       VITE_API_URL: "http://backend:${BACKEND_PORT}"  # Backend im Compose-Netzwerk erreichbar
     depends_on:
