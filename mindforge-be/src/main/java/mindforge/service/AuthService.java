@@ -16,15 +16,17 @@ public class AuthService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final JwtService jwtService;
 
   public UserResponseDto register(UserRequestDto request) {
     if (userRepository.existsByUsername(request.getUsername())) {
-      throw new RuntimeException("Username already exists");
+      throw new IllegalArgumentException("Username already exists");
     }
 
     User user = User.builder()
         .username(request.getUsername())
         .password(passwordEncoder.encode(request.getPassword()))
+        .role("USER")
         .build();
 
     userRepository.save(user);
@@ -38,11 +40,34 @@ public class AuthService {
 
   public Optional<UserResponseDto> login(UserRequestDto request) {
     return userRepository.findByUsername(request.getUsername())
-        .filter(u -> passwordEncoder.matches(request.getPassword(), u.getPassword()))
+        .filter(u -> passwordMatches(request.getPassword(), u.getPassword()))
         .map(u -> UserResponseDto.builder()
             .id(u.getId())
             .username(u.getUsername())
             .role(u.getRole())
             .build());
+  }
+
+  public Optional<String> loginWithJwt(UserRequestDto request) {
+    return userRepository.findByUsername(request.getUsername())
+        .filter(u -> passwordMatches(request.getPassword(), u.getPassword()))
+        .map(u -> jwtService.generateToken(u.getUsername()));
+  }
+
+  public Optional<UserResponseDto> findByUsername(String username) {
+    return userRepository.findByUsername(username)
+        .map(u -> UserResponseDto.builder()
+            .id(u.getId())
+            .username(u.getUsername())
+            .role(u.getRole())
+            .build());
+  }
+
+  public String encodePassword(String raw) {
+    return passwordEncoder.encode(raw);
+  }
+
+  public boolean passwordMatches(String raw, String hashed) {
+    return passwordEncoder.matches(raw, hashed);
   }
 }

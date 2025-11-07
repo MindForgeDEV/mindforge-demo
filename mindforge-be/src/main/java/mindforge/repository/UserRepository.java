@@ -1,4 +1,3 @@
-
 package mindforge.repository;
 
 import mindforge.model.User;
