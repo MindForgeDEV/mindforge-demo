@@ -35,7 +35,6 @@ class AuthControllerIntegrationTests {
 
   @Test
   void register_and_login_over_http_works() throws Exception {
-    // Registrierung
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -46,7 +45,6 @@ class AuthControllerIntegrationTests {
             """))
         .andExpect(status().isOk());
 
-    // Login
     MvcResult loginResult = mockMvc.perform(post("/auth/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -58,14 +56,12 @@ class AuthControllerIntegrationTests {
         .andExpect(status().isOk())
         .andReturn();
 
-    // JWT aus Login-Response extrahieren
     AuthResponseDto authResponse = objectMapper.readValue(
         loginResult.getResponse().getContentAsString(),
         AuthResponseDto.class);
     String token = authResponse.getToken();
     assertThat(token).isNotEmpty();
 
-    // /me Endpoint testen mit JWT
     MvcResult meResult = mockMvc.perform(get("/auth/me")
         .header("Authorization", "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON))
