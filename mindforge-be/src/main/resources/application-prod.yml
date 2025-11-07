@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+frontend:
+  url: ${FRONTEND_URL}

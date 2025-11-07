@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mindforge}
+    username: ${POSTGRES_USER:devuser}
+    password: ${POSTGRES_PASSWORD:devpass}
+
+jwt:
+  secret: ${JWT_SECRET:devSecret}
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:3000}

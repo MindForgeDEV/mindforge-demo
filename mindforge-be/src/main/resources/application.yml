@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: mindforge
+  liquibase:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    active: dev
+
+server:
+  port: 8080
