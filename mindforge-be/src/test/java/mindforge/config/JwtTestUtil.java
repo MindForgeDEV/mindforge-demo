@@ -2,19 +2,26 @@ package mindforge.config;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Configuration
 public class JwtTestUtil {
 
-  @Value("${jwt.secret:secret-key-for-tests}") // default Secret für Tests
-  private String secret;
+  private final SecretKey key;
+  private final long expirationMs;
 
-  @Value("${jwt.expiration:3600000}") // 1 Stunde
-  private long expirationMs;
+  public JwtTestUtil(
+      @Value("${jwt.secret}") String secret,
+      @Value("${jwt.expiration}") long expirationMs) {
+    this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)); // sicherer Schlüssel
+    this.expirationMs = expirationMs;
+  }
 
   // JWT für einen Benutzernamen generieren
   public String generateToken(String username) {
@@ -22,7 +29,7 @@ public class JwtTestUtil {
         .setSubject(username)
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-        .signWith(SignatureAlgorithm.HS512, secret)
+        .signWith(key, SignatureAlgorithm.HS256)
         .compact();
   }
 }

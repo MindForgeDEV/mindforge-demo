@@ -1,23 +1,22 @@
 package mindforge.service;
 
-import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Service
 public class JwtService {
 
-  private final Key key;
+  private final SecretKey key;
   private final long expirationMillis;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -34,7 +33,7 @@ public class JwtService {
         .setSubject(username)
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
-        .signWith(key, SignatureAlgorithm.HS256)
+        .signWith(key, SignatureAlgorithm.HS256) // konsistenter Algorithmus
         .compact();
   }
 

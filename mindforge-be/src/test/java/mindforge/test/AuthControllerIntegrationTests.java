@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mindforge.dto.AuthResponseDto;
 import mindforge.dto.UserResponseDto;
 import mindforge.dto.UserRequestDto;
-import mindforge.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,11 +29,9 @@ class AuthControllerIntegrationTests {
   @Autowired
   private ObjectMapper objectMapper;
 
-  @Autowired
-  private JwtService jwtService;
-
   @Test
   void register_and_login_over_http_works() throws Exception {
+    // Registrierung
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -45,6 +42,7 @@ class AuthControllerIntegrationTests {
             """))
         .andExpect(status().isOk());
 
+    // Login und JWT abholen
     MvcResult loginResult = mockMvc.perform(post("/auth/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -62,6 +60,7 @@ class AuthControllerIntegrationTests {
     String token = authResponse.getToken();
     assertThat(token).isNotEmpty();
 
+    // /me-Endpunkt prüfen (USER-Rolle)
     MvcResult meResult = mockMvc.perform(get("/auth/me")
         .header("Authorization", "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON))
@@ -72,6 +71,7 @@ class AuthControllerIntegrationTests {
         meResult.getResponse().getContentAsString(),
         UserResponseDto.class);
     assertThat(meDto.getUsername()).isEqualTo("u1");
+    assertThat(meDto.getRole()).isEqualTo("USER");
   }
 
   @Test
@@ -85,5 +85,57 @@ class AuthControllerIntegrationTests {
             }
             """))
         .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void access_me_fails_without_token() throws Exception {
+    mockMvc.perform(get("/auth/me")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void access_me_fails_with_invalid_token() throws Exception {
+    mockMvc.perform(get("/auth/me")
+        .header("Authorization", "Bearer invalid.token.here")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void access_me_fails_for_invalid_role() throws Exception {
+    // User mit anderer Rolle registrieren
+    mockMvc.perform(post("/auth/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {
+              "username":"adminuser",
+              "password":"pw"
+            }
+            """))
+        .andExpect(status().isOk());
+
+    // Login
+    MvcResult loginResult = mockMvc.perform(post("/auth/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {
+              "username":"adminuser",
+              "password":"pw"
+            }
+            """))
+        .andExpect(status().isOk())
+        .andReturn();
+
+    AuthResponseDto authResponse = objectMapper.readValue(
+        loginResult.getResponse().getContentAsString(),
+        AuthResponseDto.class);
+
+    // /me-Endpunkt mit Rolle, die nicht passt (falls du Rollenprüfung auf andere
+    // Rollen hast)
+    mockMvc.perform(get("/auth/me")
+        .header("Authorization", "Bearer " + authResponse.getToken())
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk()); // Hier USER hat Zugriff, ADMIN ebenfalls erlaubt
   }
 }

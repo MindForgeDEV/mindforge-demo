@@ -50,3 +50,7 @@ tasks.test {
     useJUnitPlatform()
     systemProperty("spring.profiles.active", "test")
 }
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Xlint:deprecation")
+}
