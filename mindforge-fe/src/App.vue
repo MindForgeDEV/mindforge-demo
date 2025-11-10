@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-import HttpTokenTest from './components/HttpTokenTest.vue'
 </script>
 
 <template>
-  <HttpTokenTest/>
+  <HelloWorld/>
 </template>
 
 <style scoped>
