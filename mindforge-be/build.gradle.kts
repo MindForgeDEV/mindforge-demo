@@ -46,6 +46,20 @@ dependencies {
     testImplementation("org.assertj:assertj-core")
 }
 
+tasks.register<JavaExec>("runDev") {
+    group = "application"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("mindforge.MindforgeApplication")
+    environment("SPRING_PROFILES_ACTIVE", "dev")
+}
+
+tasks.register<JavaExec>("runProd") {
+    group = "application"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("mindforge.MindforgeApplication")
+    environment("SPRING_PROFILES_ACTIVE", "prod")
+}
+
 tasks.test {
     useJUnitPlatform()
     systemProperty("spring.profiles.active", "test")

@@ -23,7 +23,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:80"
     environment:
-      VITE_API_URL: "http://backend:${BACKEND_PORT}"  # Backend im Compose-Netzwerk erreichbar
+      VITE_API_URL: "http://backend:${BACKEND_PORT}"
     depends_on:
       - backend
     networks:
