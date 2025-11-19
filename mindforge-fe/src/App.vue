@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import LoginButton from './components/LoginButton.vue'
+import RegisterButton from './components/RegisterButton.vue'
+import MeButton from './components/MeButton.vue'
 </script>
 
 <template>
-  <HelloWorld/>
+  <div class='flex'>
+    <RegisterButton/>
+    <LoginButton/>
+    <MeButton/>
+  </div>
 </template>
 
 <style scoped>

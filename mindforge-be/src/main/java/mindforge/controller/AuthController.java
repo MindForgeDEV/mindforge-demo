@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,12 +21,22 @@ public class AuthController {
   private final JwtService jwtService;
 
   @PostMapping("/register")
-  public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto request) {
+  public ResponseEntity<?> register(@Valid @RequestBody UserRequestDto request) {
     try {
-      UserResponseDto user = authService.register(request);
-      return ResponseEntity.ok(user);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build(); // Username exists
+      if (authService.findByUsername(request.getUsername()).isPresent()) {
+        return ResponseEntity.status(409)
+            .body(Map.of("error", "Benutzername existiert bereits"));
+      }
+
+      // User anlegen
+      UserResponseDto createdUser = authService.register(request);
+
+      // Erfolgreiche Response
+      return ResponseEntity.status(201).body(createdUser);
+
+    } catch (Exception e) {
+      return ResponseEntity.status(500)
+          .body(Map.of("error", "Interner Serverfehler"));
     }
   }
 
@@ -33,7 +44,7 @@ public class AuthController {
   public ResponseEntity<AuthResponseDto> login(@RequestBody UserRequestDto request) {
     return authService.loginWithJwt(request)
         .map(token -> ResponseEntity.ok(new AuthResponseDto(request.getUsername(), token)))
-        .orElseGet(() -> ResponseEntity.status(401).build()); // Invalid credentials
+        .orElseGet(() -> ResponseEntity.status(401).build());
   }
 
   @GetMapping("/me")
@@ -47,22 +58,21 @@ public class AuthController {
     try {
       username = jwtService.extractUsername(jwt);
     } catch (Exception e) {
-      return ResponseEntity.status(401).build(); // Invalid or expired token
+      return ResponseEntity.status(401).build();
     }
 
     Optional<UserResponseDto> userDtoOpt = authService.findByUsername(username);
 
     if (userDtoOpt.isEmpty()) {
-      return ResponseEntity.status(404).build(); // User not found
+      return ResponseEntity.status(404).build();
     }
 
     UserResponseDto userDto = userDtoOpt.get();
 
-    // Rolle USER oder ADMIN darf auf jeden Fall zugreifen
     if (!"USER".equals(userDto.getRole()) && !"ADMIN".equals(userDto.getRole())) {
-      return ResponseEntity.status(403).build(); // Forbidden
+      return ResponseEntity.status(403).build();
     }
 
-    return ResponseEntity.ok(userDto); // Zugriff erlaubt
+    return ResponseEntity.ok(userDto);
   }
 }
