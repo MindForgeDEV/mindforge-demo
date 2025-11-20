@@ -1,6 +1,4 @@
 HELP.md
-flake.nix
-flake.lock
 .env
 .gradle
 build/
