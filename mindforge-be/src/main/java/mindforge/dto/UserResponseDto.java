@@ -4,13 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Response with user details")
 public class UserResponseDto {
-  private Long id;
-  private String username;
-  private String role;
+
+    @Schema(description = "Username of the user", example = "john123")
+    private String username;
+
+    @Schema(description = "Role of the user", example = "USER")
+    private String role;
 }
