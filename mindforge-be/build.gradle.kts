@@ -1,7 +1,10 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.5.7"
 	id("io.spring.dependency-management") version "1.1.7"
+    id("org.openapi.generator") version "7.15.0"
 }
 
 group = "mindforge"
@@ -69,4 +72,30 @@ tasks.test {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:deprecation")
+}
+
+tasks.register<BootJar>("bootJarProd") {
+    group = "build"
+    description = "Builds production jar with prod profile"
+    archiveClassifier.set("prod")
+    dependsOn("test")
+}
+
+openApiGenerate {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/openapi/openapi.yaml")
+    outputDir.set("$buildDir/generated")
+    apiPackage.set("com.mindforge.api")
+    modelPackage.set("com.mindforge.model")
+    configOptions.set(
+        mapOf(
+            "interfaceOnly" to "true",
+            "useTags" to "true",
+            "dateLibrary" to "java21"
+        )
+    )
+}
+
+sourceSets["main"].java {
+    srcDir("$buildDir/generated/src/main/java")
 }

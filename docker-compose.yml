@@ -20,6 +20,7 @@ services:
 
   frontend:
     build: mindforge-fe
+    env_file: .env
     ports:
       - "${FRONTEND_PORT}:80"
     environment:

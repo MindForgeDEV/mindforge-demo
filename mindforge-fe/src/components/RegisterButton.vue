@@ -35,7 +35,7 @@ const register = async () => {
   successMessage.value = ''
 
   try {
-    const response = await axios.post('${API_URL}:${BACKEND_PORT}/api/auth/register', {
+    const response = await axios.post(`${API_URL}:${BACKEND_PORT}/api/auth/register`, {
       username: username.value,
       password: password.value
     })

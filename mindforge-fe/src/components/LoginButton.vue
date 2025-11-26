@@ -35,7 +35,7 @@ const login = async () => {
   jwt.value = null
 
   try {
-    const response = await axios.post(`${API_URL}/auth/login`, {
+    const response = await axios.post(`${API_URL}:${BACKEND_PORT}/auth/login`, {
       username: username.value,
       password: password.value
     })

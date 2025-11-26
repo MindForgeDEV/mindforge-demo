@@ -15,12 +15,13 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-// Backend-URL aus Vite ENV
 const API_URL = import.meta.env.API_URL || 'http://localhost'
 const BACKEND_PORT = import.meta.env.BACKEND_PORT || '8080'
 
 const user = ref<{ username: string; role: string } | null>(null)
 const errorMessage = ref('')
+
+const jwt = ref(localStorage.getItem('jwt') || '')
 
 const fetchMe = async () => {
   if (!jwt.value) {
@@ -32,7 +33,7 @@ const fetchMe = async () => {
   user.value = null
 
   try {
-    const response = await axios.get('${API_URL}:${BACKEND_PORT}/api/auth/me', {
+    const response = await axios.get(`${API_URL}:${BACKEND_PORT}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${jwt.value}`
       }

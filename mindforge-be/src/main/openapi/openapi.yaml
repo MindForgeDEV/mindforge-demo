@@ -1,0 +1,184 @@
+openapi: 3.1.0
+info:
+  title: Mindforge Demo API
+  version: 1.0.0
+  description: Spec-first API für Benutzer-Management und Authentifizierung
+
+servers:
+  - url: "http://{API_HOST}:{API_PORT}/api"
+    description: "API Server"
+    variables:
+      API_HOST:
+        default: "localhost"
+      API_PORT:
+        default: "8080"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegister:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        email:
+          type: string
+          format: email
+
+    UserLogin:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    AuthToken:
+      type: object
+      required:
+        - accessToken
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+          format: int64
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+
+    UserInfo:
+      type: object
+      required:
+        - username
+        - role
+      properties:
+        username:
+          type: string
+        role:
+          type: string
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      summary: Benutzer registrieren
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: Benutzer erfolgreich erstellt
+        '400':
+          description: Ungültige Anfrage
+
+  /auth/login:
+    post:
+      summary: Benutzer einloggen und JWT erhalten
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: JWT Token zurückgegeben
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Ungültige Anmeldedaten
+
+  /auth/logout:
+    post:
+      summary: Benutzer ausloggen / JWT invalidieren
+      tags: [Auth]
+      security: [BearerAuth]
+      responses:
+        '204':
+          description: Erfolgreich ausgeloggt
+
+  /auth/refresh:
+    post:
+      summary: JWT Token erneuern
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Neues JWT Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Ungültiger Refresh Token
+
+  /auth/me:
+    get:
+      summary: Aktuellen Benutzer abrufen
+      tags: [Auth]
+      security: [BearerAuth]
+      responses:
+        '200':
+          description: Benutzerinformationen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '401':
+          description: Nicht autorisiert
+
+  /users/{id}:
+    delete:
+      summary: Benutzer löschen
+      tags: [Users]
+      security: [BearerAuth]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Benutzer gelöscht
+        '401':
+          description: Nicht autorisiert
+        '404':
+          description: Benutzer nicht gefunden
