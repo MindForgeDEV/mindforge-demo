@@ -84,10 +84,11 @@ tasks.register<BootJar>("bootJarProd") {
     dependsOn("test")
 }
 
+// OpenAPI generation configured for Spring Boot 3 with jakarta compatibility
 openApiGenerate {
     generatorName.set("spring")
     inputSpec.set("$projectDir/src/main/openapi/openapi.yaml")
-    outputDir.set("$buildDir/generated")
+    outputDir.set(layout.buildDirectory.dir("generated").get().asFile.absolutePath)
     apiPackage.set("com.mindforge.api")
     modelPackage.set("com.mindforge.model")
     configOptions.set(
@@ -95,14 +96,19 @@ openApiGenerate {
             "interfaceOnly" to "false",
             "useTags" to "true",
             "dateLibrary" to "java21",
-            "java8" to "true", 
+            "java8" to "true",
             "useBeanValidation" to "true",
             "library" to "spring-boot",
-            "modelBuilder" to "true"
+            "modelBuilder" to "true",
+            // Jakarta EE compatibility for Spring Boot 3
+            "useJakartaEe" to "true",
+            "jakarta" to "true",
+            "containerDefaultToNullable" to "false"
         )
     )
 }
 
 sourceSets["main"].java {
-    srcDir("$buildDir/generated/src/main/java")
+    srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+    exclude("org/openapitools/OpenApiGeneratorApplication.java")
 }
