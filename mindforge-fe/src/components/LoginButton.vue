@@ -12,37 +12,35 @@
 
     <button type="submit">Login</button>
 
-    <p v-if="jwt" style="color: green;">JWT: {{ jwt }}</p>
+    <p v-if="authToken" style="color: green;">Logged in as: {{ authToken.username }}</p>
     <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
   </form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
-
-const API_URL = import.meta.env.API_URL || 'http://localhost'
-const BACKEND_PORT = import.meta.env.BACKEND_PORT || '8080'
+import { authApi, type AuthToken } from '../api/auth'
 
 const username = ref('')
 const password = ref('')
 
-const jwt = ref<string | null>(null)
+const authToken = ref<AuthToken | null>(null)
 const errorMessage = ref('')
 
 const login = async () => {
   errorMessage.value = ''
-  jwt.value = null
+  authToken.value = null
 
   try {
-    const response = await axios.post(`${API_URL}:${BACKEND_PORT}/auth/login`, {
+    const token = await authApi.login({
       username: username.value,
       password: password.value
     })
 
-    // JWT aus Response speichern
-    jwt.value = response.data.token // oder response.data.jwt je nach Backend
-    console.log('JWT received:', jwt.value)
+    authToken.value = token
+    // Store JWT token in localStorage for persistence
+    localStorage.setItem('jwt', token.token)
+    console.log('Login successful:', token)
 
     // optional: Felder zurücksetzen
     username.value = ''

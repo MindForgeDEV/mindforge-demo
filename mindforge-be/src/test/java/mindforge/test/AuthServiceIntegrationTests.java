@@ -59,7 +59,7 @@ class AuthServiceIntegrationTests {
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.username").value("testuser"));
 
     // Login
@@ -98,12 +98,12 @@ class AuthServiceIntegrationTests {
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isConflict());
   }
 
   @Test
@@ -116,7 +116,7 @@ class AuthServiceIntegrationTests {
     mockMvc.perform(post("/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(registerRequest)))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
     UserRequestDto wrongLogin = UserRequestDto.builder()
         .username("loginUser")

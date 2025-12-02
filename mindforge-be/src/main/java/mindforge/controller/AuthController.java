@@ -68,7 +68,7 @@ public class AuthController {
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<UserResponseDto> me(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<UserResponseDto> me(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(401).build();
         }

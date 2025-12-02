@@ -13,7 +13,7 @@ spring:
       enabled: always
 
 jwt:
-  secret: verylongrandomstringwithatleast32chars!!!
+  secret: verylongrandomstringwithatleast32charactersforjwttesting!!!
   expiration: 3600000
 
 frontend:

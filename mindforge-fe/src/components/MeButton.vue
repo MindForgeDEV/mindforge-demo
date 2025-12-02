@@ -3,6 +3,7 @@
     <button @click="fetchMe">Load My Info</button>
 
     <div v-if="user">
+      <p>ID: {{ user.id }}</p>
       <p>Username: {{ user.username }}</p>
       <p>Role: {{ user.role }}</p>
     </div>
@@ -13,18 +14,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import { authApi, type UserInfo } from '../api/auth'
 
-const API_URL = import.meta.env.API_URL || 'http://localhost'
-const BACKEND_PORT = import.meta.env.BACKEND_PORT || '8080'
-
-const user = ref<{ username: string; role: string } | null>(null)
+const user = ref<UserInfo | null>(null)
 const errorMessage = ref('')
 
-const jwt = ref(localStorage.getItem('jwt') || '')
-
 const fetchMe = async () => {
-  if (!jwt.value) {
+  const jwt = localStorage.getItem('jwt')
+  if (!jwt) {
     errorMessage.value = 'Kein JWT vorhanden. Bitte zuerst einloggen.'
     return
   }
@@ -33,13 +30,8 @@ const fetchMe = async () => {
   user.value = null
 
   try {
-    const response = await axios.get(`${API_URL}:${BACKEND_PORT}/api/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${jwt.value}`
-      }
-    })
-
-    user.value = response.data
+    const userData = await authApi.me()
+    user.value = userData
     console.log('User data:', user.value)
 
   } catch (error: any) {

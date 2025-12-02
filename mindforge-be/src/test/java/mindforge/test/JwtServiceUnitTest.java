@@ -5,7 +5,12 @@ import mindforge.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
+
+import io.jsonwebtoken.security.Keys;
 
 class JwtServiceUnitTest {
 
@@ -14,8 +19,9 @@ class JwtServiceUnitTest {
   @BeforeEach
   void setUp() {
     String secret = "supersecretkeysupersecretkey12341234";
+    SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     long expirationMillis = 3600_000; // 1 Stunde
-    jwtService = new JwtService(secret, expirationMillis);
+    jwtService = new JwtService(secretKey, expirationMillis);
   }
 
   @Test

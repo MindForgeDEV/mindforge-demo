@@ -29,7 +29,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.liquibase:liquibase-core")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
-
+    implementation("jakarta.validation:jakarta.validation-api:3.1.0")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final") // Implementierung
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.1")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
@@ -89,9 +92,13 @@ openApiGenerate {
     modelPackage.set("com.mindforge.model")
     configOptions.set(
         mapOf(
-            "interfaceOnly" to "true",
+            "interfaceOnly" to "false",
             "useTags" to "true",
-            "dateLibrary" to "java21"
+            "dateLibrary" to "java21",
+            "java8" to "true", 
+            "useBeanValidation" to "true",
+            "library" to "spring-boot",
+            "modelBuilder" to "true"
         )
     )
 }

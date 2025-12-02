@@ -5,7 +5,7 @@ info:
   description: Spec-first API für Benutzer-Management und Authentifizierung
 
 servers:
-  - url: "http://{API_HOST}:{API_PORT}/api"
+  - url: "http://{API_HOST}:{API_PORT}"
     description: "API Server"
     variables:
       API_HOST:
@@ -26,16 +26,12 @@ components:
       required:
         - username
         - password
-        - email
       properties:
         username:
           type: string
         password:
           type: string
           format: password
-        email:
-          type: string
-          format: email
 
     UserLogin:
       type: object
@@ -52,29 +48,24 @@ components:
     AuthToken:
       type: object
       required:
-        - accessToken
-        - expiresIn
+        - username
+        - token
       properties:
-        accessToken:
+        username:
           type: string
-        expiresIn:
-          type: integer
-          format: int64
-
-    RefreshTokenRequest:
-      type: object
-      required:
-        - refreshToken
-      properties:
-        refreshToken:
+        token:
           type: string
 
     UserInfo:
       type: object
       required:
+        - id
         - username
         - role
       properties:
+        id:
+          type: integer
+          format: int64
         username:
           type: string
         role:
@@ -120,40 +111,12 @@ paths:
         '401':
           description: Ungültige Anmeldedaten
 
-  /auth/logout:
-    post:
-      summary: Benutzer ausloggen / JWT invalidieren
-      tags: [Auth]
-      security: [BearerAuth]
-      responses:
-        '204':
-          description: Erfolgreich ausgeloggt
-
-  /auth/refresh:
-    post:
-      summary: JWT Token erneuern
-      tags: [Auth]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
-      responses:
-        '200':
-          description: Neues JWT Token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthToken'
-        '401':
-          description: Ungültiger Refresh Token
-
   /auth/me:
     get:
       summary: Aktuellen Benutzer abrufen
       tags: [Auth]
-      security: [BearerAuth]
+      security:
+        - BearerAuth: []
       responses:
         '200':
           description: Benutzerinformationen
@@ -164,21 +127,4 @@ paths:
         '401':
           description: Nicht autorisiert
 
-  /users/{id}:
-    delete:
-      summary: Benutzer löschen
-      tags: [Users]
-      security: [BearerAuth]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Benutzer gelöscht
-        '401':
-          description: Nicht autorisiert
-        '404':
-          description: Benutzer nicht gefunden
+

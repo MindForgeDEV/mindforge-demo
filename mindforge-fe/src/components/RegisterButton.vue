@@ -19,10 +19,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
-
-const API_URL = import.meta.env.API_URL || 'http://localhost'
-const BACKEND_PORT = import.meta.env.BACKEND_PORT || '8080'
+import { authApi, type UserRegister } from '../api/auth'
 
 const username = ref('')
 const password = ref('')
@@ -35,13 +32,15 @@ const register = async () => {
   successMessage.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}:${BACKEND_PORT}/api/auth/register`, {
+    const userData: UserRegister = {
       username: username.value,
       password: password.value
-    })
+    }
+
+    await authApi.register(userData)
 
     successMessage.value = 'User erfolgreich erstellt!'
-    console.log('Register Response:', response.data)
+    console.log('Registration successful')
 
     // optional: Felder zurücksetzen
     username.value = ''
