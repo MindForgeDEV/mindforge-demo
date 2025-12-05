@@ -24,7 +24,10 @@ public class AuthenticationResponseDto {
      @Schema(description = "Username of the user", example = "john123")
      private String username;
 
-     @NotBlank
-     @Schema(description = "JWT token for authentication", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-     private String token;
+      @NotBlank
+      @Schema(description = "JWT token for authentication", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+      private String token;
+
+      @Schema(description = "Refresh token for obtaining new access tokens", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+      private String refreshToken;
 }

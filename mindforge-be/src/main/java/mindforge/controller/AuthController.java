@@ -57,8 +57,29 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Invalid credentials")
     })
     public ResponseEntity<AuthenticationResponseDto> login(@RequestBody UserRequestDto request) {
-        return authService.loginWithJwt(request)
-                .map(token -> ResponseEntity.ok(new AuthenticationResponseDto(request.getUsername(), token)))
+        return authService.loginWithTokens(request)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(401).build());
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token using refresh token")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Token refreshed successfully"),
+        @ApiResponse(responseCode = "401", description = "Invalid refresh token")
+    })
+    public ResponseEntity<AuthenticationResponseDto> refresh(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        if (refreshToken == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return authService.refreshToken(refreshToken)
+                .map(token -> ResponseEntity.ok(AuthenticationResponseDto.builder()
+                        .username(jwtService.extractUsername(refreshToken))
+                        .token(token)
+                        .refreshToken(refreshToken)
+                        .build()))
                 .orElseGet(() -> ResponseEntity.status(401).build());
     }
 

@@ -122,7 +122,41 @@ public class AuthenticationService {
   public Optional<String> loginWithJwt(UserRequestDto request) {
     return userRepository.findByUsername(request.getUsername())
         .filter(u -> passwordMatches(request.getPassword(), u.getPassword()))
-        .map(u -> jwtService.generateToken(u.getUsername()));
+        .map(u -> {
+          String refreshToken = jwtService.generateRefreshToken(u.getUsername());
+          u.setRefreshToken(refreshToken);
+          u.setUpdatedAt(LocalDateTime.now());
+          userRepository.save(u);
+          return jwtService.generateToken(u.getUsername());
+        });
+  }
+
+  public Optional<AuthenticationResponseDto> loginWithTokens(UserRequestDto request) {
+    return userRepository.findByUsername(request.getUsername())
+        .filter(u -> passwordMatches(request.getPassword(), u.getPassword()))
+        .map(u -> {
+          String accessToken = jwtService.generateToken(u.getUsername());
+          String refreshToken = jwtService.generateRefreshToken(u.getUsername());
+          u.setRefreshToken(refreshToken);
+          u.setUpdatedAt(LocalDateTime.now());
+          userRepository.save(u);
+          return AuthenticationResponseDto.builder()
+              .username(u.getUsername())
+              .token(accessToken)
+              .refreshToken(refreshToken)
+              .build();
+        });
+  }
+
+  public Optional<String> refreshToken(String refreshToken) {
+    try {
+      String username = jwtService.extractUsername(refreshToken);
+      return userRepository.findByUsername(username)
+          .filter(u -> refreshToken.equals(u.getRefreshToken()))
+          .map(u -> jwtService.generateToken(u.getUsername()));
+    } catch (Exception e) {
+      return Optional.empty();
+    }
   }
 
   public Optional<UserResponseDto> findByUsername(String username) {

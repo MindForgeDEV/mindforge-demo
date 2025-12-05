@@ -34,6 +34,8 @@ public class User {
 
   private String avatarUrl;
 
+  private String refreshToken;
+
   @Builder.Default
   @Column(name = "failed_login_attempts")
   private Integer failedLoginAttempts = 0;

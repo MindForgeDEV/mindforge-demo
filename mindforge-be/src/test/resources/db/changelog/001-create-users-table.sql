@@ -10,6 +10,7 @@ CREATE TABLE users (
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     avatar_url VARCHAR(500),
+    refresh_token TEXT,
     failed_login_attempts INTEGER DEFAULT 0,
     locked_until TIMESTAMP,
     account_locked BOOLEAN DEFAULT FALSE,
