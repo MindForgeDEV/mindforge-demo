@@ -7,6 +7,6 @@
 
     <include file="001-create-users-table.sql" relativeToChangelogFile="true"/>
     <include file="002-create-projects-table.sql" relativeToChangelogFile="true"/>
-    <include file="003-insert-test-data.sql" relativeToChangelogFile="true"/>
+    <include file="002-insert-test-data.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

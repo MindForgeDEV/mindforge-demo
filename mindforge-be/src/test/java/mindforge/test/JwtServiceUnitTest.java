@@ -21,7 +21,8 @@ class JwtServiceUnitTest {
     String secret = "supersecretkeysupersecretkey12341234";
     SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     long expirationMillis = 3600_000; // 1 Stunde
-    jwtService = new JwtService(secretKey, expirationMillis);
+    long refreshExpirationMillis = 604800000; // 7 Tage
+    jwtService = new JwtService(secretKey, expirationMillis, refreshExpirationMillis);
   }
 
   @Test
