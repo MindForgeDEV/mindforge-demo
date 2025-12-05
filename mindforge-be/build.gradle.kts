@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
 	java
-	id("org.springframework.boot") version "3.5.7"
+	id("org.springframework.boot") version "3.6.1"
 	id("io.spring.dependency-management") version "1.1.7"
     id("org.openapi.generator") version "7.15.0"
     id("org.owasp.dependencycheck") version "10.0.4"

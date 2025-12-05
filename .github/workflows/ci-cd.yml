@@ -132,6 +132,20 @@ jobs:
       with:
         sarif_file: 'trivy-results.sarif'
 
+    - name: Run SAST with SonarQube
+      uses: sonarsource/sonarqube-scan-action@v4
+      with:
+        projectKey: mindforge-demo
+        sonar.host.url: ${{ secrets.SONAR_HOST_URL }}
+        sonar.token: ${{ secrets.SONAR_TOKEN }}
+
+    - name: Run DAST with OWASP ZAP
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://localhost:8080'
+        rules_file_name: '.zap/rules.tsv'
+        artifact_name: 'zap-report'
+
   deploy:
     needs: [build, security-scan]
     runs-on: ubuntu-latest

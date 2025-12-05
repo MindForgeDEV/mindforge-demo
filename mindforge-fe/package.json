@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "axios": "^1.13.2",
-    "vue": "^3.5.22",
+    "vue": "^3.6.0",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
@@ -25,9 +25,9 @@
     "@vue/tsconfig": "^0.8.1",
     "axe-playwright": "^2.0.1",
     "jsdom": "^25.0.1",
-    "typescript": "~5.9.3",
-    "vite": "^5.4.8",
-    "vitest": "^2.1.8",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.0",
+    "vitest": "^2.2.0",
     "vue-tsc": "^2.1.10"
   }
 }
