@@ -30,6 +30,10 @@ apiClient.interceptors.request.use(
 export interface UserRegister {
   username: string;
   password: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
 }
 
 export interface UserLogin {
@@ -40,12 +44,17 @@ export interface UserLogin {
 export interface AuthToken {
   username: string;
   token: string;
+  refreshToken?: string;
 }
 
 export interface UserInfo {
   id: number;
   username: string;
   role: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
 }
 
 // API methods
@@ -59,7 +68,23 @@ export const authApi = {
   // Login user
   login: async (credentials: UserLogin): Promise<AuthToken> => {
     const response: AxiosResponse<AuthToken> = await apiClient.post('/auth/login', credentials);
-    return response.data;
+    const data = response.data;
+    // Store tokens
+    if (data.token) localStorage.setItem('jwt', data.token);
+    if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+    return data;
+  },
+
+  // Refresh token
+  refresh: async (): Promise<AuthToken> => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) throw new Error('No refresh token');
+
+    const response: AxiosResponse<AuthToken> = await apiClient.post('/auth/refresh', { refreshToken });
+    const data = response.data;
+    if (data.token) localStorage.setItem('jwt', data.token);
+    if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+    return data;
   },
 
   // Get current user info

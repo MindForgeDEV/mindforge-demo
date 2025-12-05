@@ -415,7 +415,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { authApi, type AuthToken, type UserInfo, type UserRegister } from '../api/auth'
+
+// Router
+const router = useRouter()
 
 // Reactive state
 const activeView = ref<'register' | 'login' | 'profile' | 'settings'>('register')
@@ -524,6 +528,9 @@ const handleLogin = async () => {
       localStorage.setItem('jwt', token.token)
       localStorage.removeItem('jwt_expires') // Remove expiration for session-only
     }
+
+    // Navigate to dashboard
+    router.push('/dashboard')
 
     // Reset form but keep remember me setting
     const rememberMe = loginForm.value.rememberMe

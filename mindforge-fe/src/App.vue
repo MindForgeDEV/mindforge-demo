@@ -40,7 +40,7 @@ onMounted(() => {
 
     <!-- Main Application -->
     <div v-else class="main-app">
-      <AuthFlow />
+      <router-view />
     </div>
   </div>
 </template>
