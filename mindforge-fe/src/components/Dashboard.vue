@@ -38,11 +38,12 @@
         </form>
       </section>
 
-      <section class="data-section">
-        <h2>Data Overview</h2>
-        <p>This is where you would display lists of projects, notes, or other data.</p>
-        <!-- Placeholder for future data lists -->
-      </section>
+       <section class="data-section">
+         <h2>Data Overview</h2>
+         <p>This is where you would display lists of projects, notes, or other data.</p>
+         <button @click="view3DScene" class="scene-btn">View 3D Scene</button>
+         <!-- Placeholder for future data lists -->
+       </section>
     </main>
   </div>
 </template>
@@ -98,6 +99,10 @@ const updateProfile = async () => {
   } finally {
     updating.value = false
   }
+}
+
+const view3DScene = () => {
+  router.push('/scene')
 }
 
 const logout = () => {
@@ -202,5 +207,21 @@ onMounted(() => {
 .update-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.scene-btn {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: transform 0.2s;
+}
+
+.scene-btn:hover {
+  transform: scale(1.05);
 }
 </style>

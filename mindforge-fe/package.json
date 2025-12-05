@@ -12,8 +12,12 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@tresjs/cientos": "^5.1.1",
+    "@tresjs/core": "^5.1.1",
+    "@types/three": "^0.181.0",
     "axios": "^1.13.2",
-    "vue": "^3.6.0",
+    "three": "^0.181.2",
+    "vue": "^3.5.0",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
@@ -27,7 +31,7 @@
     "jsdom": "^25.0.1",
     "typescript": "~5.7.2",
     "vite": "^6.0.0",
-    "vitest": "^2.2.0",
+    "vitest": "^2.1.9",
     "vue-tsc": "^2.1.10"
   }
 }
