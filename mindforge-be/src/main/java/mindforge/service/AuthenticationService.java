@@ -2,6 +2,7 @@ package mindforge.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mindforge.dto.AuthenticationResponseDto;
 import mindforge.dto.UserRequestDto;
 import mindforge.dto.UserResponseDto;
 import mindforge.model.User;
