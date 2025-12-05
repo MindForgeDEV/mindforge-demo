@@ -32,4 +32,16 @@ public class UserResponseDto {
      @NotBlank
      @Schema(description = "Role of the user", example = "USER")
      private String role;
+
+     @Schema(description = "Email of the user", example = "john@example.com")
+     private String email;
+
+     @Schema(description = "First name of the user", example = "John")
+     private String firstName;
+
+     @Schema(description = "Last name of the user", example = "Doe")
+     private String lastName;
+
+     @Schema(description = "Avatar URL of the user", example = "https://example.com/avatar.jpg")
+     private String avatarUrl;
 }

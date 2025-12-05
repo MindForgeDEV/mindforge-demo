@@ -186,12 +186,23 @@ public class AuthenticationService {
       user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
     }
 
+    // Update profile fields
+    if (updateRequest.getEmail() != null) user.setEmail(updateRequest.getEmail());
+    if (updateRequest.getFirstName() != null) user.setFirstName(updateRequest.getFirstName());
+    if (updateRequest.getLastName() != null) user.setLastName(updateRequest.getLastName());
+    if (updateRequest.getAvatarUrl() != null) user.setAvatarUrl(updateRequest.getAvatarUrl());
+
+    user.setUpdatedAt(LocalDateTime.now());
     userRepository.save(user);
 
     return UserResponseDto.builder()
         .id(user.getId())
         .username(user.getUsername())
         .role(user.getRole())
+        .email(user.getEmail())
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .avatarUrl(user.getAvatarUrl())
         .build();
   }
 

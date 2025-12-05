@@ -25,6 +25,15 @@ public class User {
   @Builder.Default
   private String role = "USER";
 
+  @Column(unique = true)
+  private String email;
+
+  private String firstName;
+
+  private String lastName;
+
+  private String avatarUrl;
+
   @Builder.Default
   @Column(name = "failed_login_attempts")
   private Integer failedLoginAttempts = 0;
