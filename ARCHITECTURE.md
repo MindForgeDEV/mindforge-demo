@@ -1,5 +1,48 @@
 # MindForge Architecture Documentation
 
+## Table of Contents
+
+- [Overview](#overview)
+- [System Architecture](#system-architecture)
+  - [High-Level Architecture](#high-level-architecture)
+  - [Technology Stack](#technology-stack)
+- [Backend Architecture](#backend-architecture)
+  - [Layered Architecture Pattern](#layered-architecture-pattern)
+  - [Package Structure](#package-structure)
+  - [Design Patterns Implemented](#design-patterns-implemented)
+  - [Security Architecture](#security-architecture)
+  - [API Design & Implementation](#api-design--implementation)
+  - [Data Architecture](#data-architecture)
+- [Frontend Architecture](#frontend-architecture)
+  - [Component Architecture](#component-architecture)
+  - [State Management](#state-management)
+  - [API Integration Layer](#api-integration-layer)
+- [DevOps Architecture](#devops-architecture)
+  - [Containerization Strategy](#containerization-strategy)
+  - [Environment Management](#environment-management)
+- [Quality Assurance](#quality-assurance)
+  - [Testing Strategy](#testing-strategy)
+  - [Code Quality Standards](#code-quality-standards)
+- [Performance Considerations](#performance-considerations)
+  - [Backend Performance](#backend-performance)
+  - [Frontend Performance](#frontend-performance)
+- [Scalability Considerations](#scalability-considerations)
+  - [Horizontal Scaling](#horizontal-scaling)
+  - [Vertical Scaling](#vertical-scaling)
+- [Security Architecture](#security-architecture)
+  - [Authentication & Authorization](#authentication--authorization)
+  - [Data Protection](#data-protection)
+- [Deployment Architecture](#deployment-architecture)
+  - [CI/CD Pipeline](#cicd-pipeline-planned)
+  - [Infrastructure as Code](#infrastructure-as-code)
+- [Monitoring & Observability](#monitoring--observability)
+  - [Application Metrics](#application-metrics)
+  - [Logging Strategy](#logging-strategy)
+- [Future Enhancements](#future-enhancements)
+  - [Microservices Migration](#microservices-migration)
+  - [Advanced Features](#advanced-features)
+  - [Cloud-Native Evolution](#cloud-native-evolution)
+
 ## Overview
 
 MindForge is a modern, enterprise-grade full-stack web application built with Java 21, Spring Boot 3, Vue 3, and TypeScript. The application demonstrates best practices in software architecture, clean code principles, and DevOps methodologies.
@@ -75,15 +118,14 @@ The backend follows a clean, layered architecture with clear separation of conce
 ```
 mindforge/
 ├── config/           # Configuration classes
-│   ├── Beans.java              # Bean definitions
-│   ├── DataSourceConfig.java   # Database configuration
+│   ├── ApplicationConfig.java  # Bean definitions
 │   ├── JwtConfig.java          # JWT configuration
 │   └── SecurityConfig.java     # Security configuration
 ├── controller/       # REST controllers
 │   ├── AuthController.java     # Authentication endpoints
 │   └── HealthController.java   # Health check endpoints
 ├── dto/             # Data Transfer Objects
-│   ├── AuthResponseDto.java    # Authentication responses
+│   ├── AuthenticationResponseDto.java # Authentication responses
 │   ├── UserRequestDto.java     # User input data
 │   └── UserResponseDto.java    # User output data
 ├── model/           # JPA entities
@@ -91,7 +133,7 @@ mindforge/
 ├── repository/      # Data access layer
 │   └── UserRepository.java     # User data access
 ├── service/         # Business logic layer
-│   ├── AuthService.java        # Authentication business logic
+│   ├── AuthenticationService.java # Authentication business logic
 │   └── JwtService.java         # JWT token management
 └── MindforgeApplication.java   # Main application class
 ```
@@ -208,9 +250,9 @@ User
 
 ```
 App.vue (Root Component)
-├── LoginButton.vue      # Authentication form
-├── RegisterButton.vue   # User registration
-└── MeButton.vue         # User profile display
+├── LoginForm.vue        # Authentication form
+├── RegisterForm.vue     # User registration
+└── ProfileView.vue      # User profile display
 ```
 
 ### State Management

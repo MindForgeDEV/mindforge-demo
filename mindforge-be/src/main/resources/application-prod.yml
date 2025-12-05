@@ -5,14 +5,61 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-jpa:
-  show-sql: false
-  hibernate:
-    ddl-auto: validate
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+  security:
+    headers:
+      enabled: ${SECURITY_HEADERS_ENABLED:true}
+
+server:
+  port: ${SERVER_PORT:8080}
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEY_STORE:}
+    key-store-password: ${SSL_KEY_STORE_PASSWORD:}
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  expiration: ${JWT_EXPIRATION:3600000}
 
 frontend:
-  url: ${FRONTEND_URL}
+  url: ${FRONTEND_URL:http://localhost:3000}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    mindforge: ${LOG_LEVEL:INFO}
+
+# Rate limiting configuration
+rate-limiting:
+  enabled: ${RATE_LIMIT_ENABLED:true}
+  requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:60}
+
+# Email configuration (for future features)
+email:
+  smtp:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+  from: ${EMAIL_FROM:noreply@mindforge.com}
+
+# External services (for future features)
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
+  github:
+    client-id: ${GITHUB_CLIENT_ID:}
+    client-secret: ${GITHUB_CLIENT_SECRET:}
+
+redis:
+  url: ${REDIS_URL:}
+  password: ${REDIS_PASSWORD:}
+
+cdn:
+  url: ${CDN_URL:}
+  enabled: ${CDN_ENABLED:false}

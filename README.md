@@ -43,15 +43,14 @@ A modern, production-ready full-stack web application demonstrating enterprise-g
 ```
 mindforge-be/
 ├── config/           # Configuration classes
-│   ├── Beans.java              # Bean definitions
-│   ├── DataSourceConfig.java   # Database configuration
+│   ├── ApplicationConfig.java  # Bean definitions
 │   ├── JwtConfig.java          # JWT security configuration
 │   └── SecurityConfig.java     # Spring Security setup
 ├── controller/       # REST API controllers
 │   ├── AuthController.java     # Authentication endpoints
 │   └── HealthController.java   # Health check endpoints
 ├── dto/             # Data Transfer Objects
-│   ├── AuthResponseDto.java    # Authentication responses
+│   ├── AuthenticationResponseDto.java # Authentication responses
 │   ├── UserRequestDto.java     # User input validation
 │   └── UserResponseDto.java    # User data responses
 ├── model/           # JPA domain entities
@@ -59,7 +58,7 @@ mindforge-be/
 ├── repository/      # Data access layer
 │   └── UserRepository.java     # JPA repository interface
 ├── service/         # Business logic layer
-│   ├── AuthService.java        # Authentication business logic
+│   ├── AuthenticationService.java # Authentication business logic
 │   └── JwtService.java         # JWT token management
 └── MindforgeApplication.java   # Spring Boot main class
 ```
@@ -137,33 +136,65 @@ mindforge-fe/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/mindforge-demo.git
-cd mindforge-demo
+# Backend tests
+cd mindforge-be
+./gradlew test                    # All tests (17 tests, all passing ✅)
+./gradlew test --tests "*UnitTest*"    # Unit tests only (5 tests)
+./gradlew test --tests "*IntegrationTest*"  # Integration tests (9 tests)
+./gradlew test --tests "*PerformanceTest*"  # Performance tests only (3 tests)
+
+# Frontend tests
+cd mindforge-fe
+npm run test:run                 # Unit tests (3 tests, all passing ✅)
+npm run test:coverage            # Unit tests with coverage report
+npm run test                     # Watch mode for development
 ```
 
 ### 2. Environment Setup
-The `.env` file is already configured for immediate use:
+
+The project uses comprehensive environment configuration with support for multiple profiles (dev, prod, test).
+
+#### Environment Files
+- **`.env.example`** - Template with all required variables and documentation
+- **`.env`** - Development environment (auto-loaded)
+- **`.env.prod`** - Production environment
+- **`.env.test`** - Test environment
+
+#### Quick Start
+```bash
+# Copy the template
+cp .env.example .env
+
+# Edit with your values (optional - defaults work for development)
+nano .env
+```
+
+#### Environment Variables
 ```env
-# Database Configuration
-POSTGRES_USER=mindforge
-POSTGRES_PASSWORD=mindforge123
+# Database
+POSTGRES_USER=mindforge_user
+POSTGRES_PASSWORD=your_secure_password_here
 POSTGRES_DB=mindforge
 POSTGRES_PORT=5432
 
 # Application Ports
 BACKEND_PORT=8080
-FRONTEND_PORT=3000
+FRONTEND_PORT=80
+SERVER_PORT=8081
 
-# JWT Configuration
+# Security
 JWT_SECRET=verylongrandomstringwithatleast32charactersforjwttesting!!!
 JWT_EXPIRATION=3600000
 
-# Frontend Configuration
+# URLs
 FRONTEND_URL=http://localhost:3000
-
-# Database URL for Spring
-SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mindforge
+VITE_API_URL=http://localhost:8081
 ```
+
+#### Profile-Specific Configuration
+- **Development** (`SPRING_PROFILES_ACTIVE=dev`): Debug logging, H2 fallback, relaxed security
+- **Production** (`SPRING_PROFILES_ACTIVE=prod`): Secure defaults, PostgreSQL required, enhanced security
+- **Testing** (`SPRING_PROFILES_ACTIVE=test`): Fast H2 database, minimal security, short JWT expiration
 
 ### 3. Development Environment (Recommended)
 
@@ -195,8 +226,8 @@ docker-compose up --build
 
 ### 4. Access the Application
 - **🎨 Frontend**: http://localhost:3000 (Beautiful animated Vue.js application)
-- **🔧 Backend API**: http://localhost:8080 (Spring Boot REST API)
-- **📚 API Documentation**: http://localhost:8080/swagger-ui.html (protected)
+- **🔧 Backend API**: http://localhost:8081 (Spring Boot REST API)
+- **📚 API Documentation**: http://localhost:8081/swagger-ui.html (protected)
 - **🗄️ Database**: PostgreSQL running on port 5432
 
 ### 5. Experience the Beautiful Auth Flow
@@ -216,18 +247,18 @@ The interface features:
 ### 5. Test the Authentication Flow
 ```bash
 # Register a new user
-curl -X POST http://localhost:8080/auth/register \
+curl -X POST http://localhost:8081/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username": "testuser", "password": "testpass123"}'
 
 # Login and get JWT token
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8081/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "testuser", "password": "testpass123"}'
 
 # Access protected endpoint with token
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8080/auth/me
+  http://localhost:8081/auth/me
 ```
 
 ### 5. Manual Development Setup
@@ -276,11 +307,11 @@ cd mindforge-be
 ```bash
 cd mindforge-be
 
-# Run all tests (14 tests, all passing)
+# Run all tests (17 tests, all passing)
 ./gradlew test
 
 # Run specific test class
-./gradlew test --tests "*AuthServiceUnitTest*"
+./gradlew test --tests "*AuthenticationServiceUnitTest*"
 
 # Run integration tests only
 ./gradlew test --tests "*IntegrationTest*"
@@ -289,17 +320,21 @@ cd mindforge-be
 **Test Coverage:**
 - **Unit Tests**: 5/5 passing - Business logic with Mockito mocks
 - **Integration Tests**: 9/9 passing - Full Spring context with HTTP endpoints
+- **Performance Tests**: 3/3 passing - Load and regression testing
 - **Test Frameworks**: JUnit 5, AssertJ, Mockito, H2 in-memory database
 
-### Frontend Testing (Framework Ready)
+### Frontend Testing (✅ All Passing)
 ```bash
 cd mindforge-fe
 
 # Type checking (strict TypeScript)
 npm run build
 
-# Run tests (framework configured, tests prepared)
+# Run tests (3 tests, all passing)
 npm run test:run
+
+# Run tests with coverage
+npm run test:coverage
 
 # Development test watching
 npm test
@@ -309,7 +344,8 @@ npm test
 - **Vitest**: Modern testing framework for Vue 3
 - **Vue Test Utils**: Component testing utilities
 - **jsdom**: Browser environment simulation
-- **Test Files**: API client and component tests prepared
+- **Test Coverage**: API client and component tests implemented
+- **Coverage Reports**: HTML and LCOV formats available
 
 ## 📚 API Documentation
 
@@ -361,8 +397,8 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### OpenAPI Specification
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+- **Swagger UI**: http://localhost:8081/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:8081/v3/api-docs
 - **Specification File**: `mindforge-be/src/main/openapi/openapi.yaml`
 
 ## 🔧 Development Workflow
@@ -414,6 +450,38 @@ npm run build
 docker-compose -f docker-compose.yml up --build -d
 ```
 
+### Kubernetes Deployment with Helm
+```bash
+# Install Helm chart
+helm install mindforge ./helm/mindforge
+
+# Upgrade existing release
+helm upgrade mindforge ./helm/mindforge
+
+# Uninstall
+helm uninstall mindforge
+```
+
+### Local Development Scripts
+```bash
+# Start PostgreSQL for development
+podman-compose -f dev-compose.yml up -d db
+
+# Backend development (PostgreSQL DB)
+cd mindforge-be && ./dev.sh
+
+# Frontend development
+cd mindforge-fe && npm run dev
+
+# Stop dev DB
+podman-compose -f dev-compose.yml down
+```
+
+**Profile Configuration:**
+- **dev**: Uses PostgreSQL (mirrors prod for realism)
+- **test**: Uses H2 for fast, isolated testing
+- **prod**: Uses PostgreSQL with environment variables
+
 ### Environment Variables for Production
 ```env
 SPRING_PROFILES_ACTIVE=prod
@@ -446,7 +514,7 @@ JWT_SECRET=production-specific-jwt-secret-32-chars-minimum
 
 ## 📈 Project Status
 
-### ✅ **FULLY FUNCTIONAL - PRODUCTION READY** 🎉
+### 🔧 **DEVELOPMENT IN PROGRESS**
 
 ### ✅ Completed Features
 - **Beautiful Animated UI**: Modern glassmorphism design with smooth transitions ✅ WORKING
@@ -459,19 +527,19 @@ JWT_SECRET=production-specific-jwt-secret-32-chars-minimum
 - **Clean Architecture**: Layered backend with clear separation of concerns ✅ WORKING
 - **Database Integration**: PostgreSQL with JPA/Hibernate ✅ WORKING
 - **Containerization**: Docker & Docker Compose deployment ✅ WORKING
-- **Testing Infrastructure**: Comprehensive backend tests (14/14 passing) ✅ WORKING
+- **Testing Infrastructure**: Comprehensive backend tests (17/17 passing) ✅ WORKING
 - **Development Tools**: Nix flakes, hot reload, multi-environment support ✅ WORKING
-- **Full Stack Integration**: Frontend ↔ Backend ↔ Database communication ✅ WORKING
-- **CORS Configuration**: Cross-origin requests properly handled ✅ WORKING
-- **Error Handling**: Proper validation and error responses ✅ WORKING
 - **Security**: Enterprise-grade authentication and authorization ✅ WORKING
+- **Code Quality**: Lombok optimization, environment variables, best practices ✅ WORKING
 
-### 🚀 **READY TO USE**
-- **Frontend**: http://localhost:3000 (Vue.js application running)
-- **Backend API**: http://localhost:8080 (Spring Boot REST API)
-- **Database**: PostgreSQL 16 with automatic schema creation
-- **Authentication**: JWT-based with secure token management
-- **All Containers**: Running successfully with proper networking
+### 🚧 **CURRENT DEVELOPMENT STATUS**
+- **Frontend**: http://localhost:3000 (Vue.js application running with hot reload)
+- **Backend API**: http://localhost:8081 (Spring Boot REST API running)
+- **Database**: PostgreSQL 16 with automatic schema creation ✅ WORKING
+- **Authentication**: JWT-based with secure token management ✅ WORKING
+- **Configuration Modes**: Dev profile activation and database connectivity ✅ WORKING
+- **Code Quality**: Lombok DTO optimization, environment variables, security hardening ✅ WORKING
+- **Testing**: 17 backend tests + 3 frontend tests, all passing ✅ WORKING
 
 ### 🎯 Future Enhancements
 - **Advanced Security**: OAuth2 integration, MFA support

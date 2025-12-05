@@ -1,12 +1,32 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mindforge
-    username: devuser
-    password: devpass
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/mindforge}
+    username: ${DB_USERNAME:mindforge}
+    password: ${DB_PASSWORD:mindforge123}
     driver-class-name: org.postgresql.Driver
   jpa:
+    hibernate:
+      ddl-auto: create
     show-sql: true
+    hibernate:
+      ddl-auto: create
 
 jwt:
-  secret: verylongrandomstringwithatleast32chars!!!
-  expiration: 3600000
+  secret: ${JWT_SECRET:verylongrandomstringwithatleast32chars!!!}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:3000}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:DEBUG}
+    mindforge: ${LOG_LEVEL:DEBUG}
+
+# Development-specific settings
+test:
+  profile: dev
+
+# Disable security features in development for easier testing
+rate-limiting:
+  enabled: ${RATE_LIMIT_ENABLED:false}

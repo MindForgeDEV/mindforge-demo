@@ -37,6 +37,13 @@
         >
           Profile
         </button>
+        <button
+          @click="setActiveView('settings')"
+          :class="['nav-btn', { active: activeView === 'settings' }]"
+          :disabled="!isLoggedIn"
+        >
+          Settings
+        </button>
       </nav>
     </header>
 
@@ -44,7 +51,7 @@
     <main class="auth-main">
       <div class="content-wrapper">
         <!-- Step Indicators -->
-        <div class="step-indicators" :class="'progress-' + activeView">
+        <div class="step-indicators" :class="'progress-' + (activeView === 'settings' ? 'profile' : activeView)">
           <div class="step-line"></div>
           <div class="steps">
             <div class="step" :class="{ active: activeView === 'register', completed: activeView === 'login' || activeView === 'profile' }">
@@ -67,7 +74,7 @@
               </div>
               <span class="step-label">Login</span>
             </div>
-            <div class="step" :class="{ active: activeView === 'profile' }">
+             <div class="step" :class="{ active: activeView === 'profile', completed: activeView === 'settings' }">
               <div class="step-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -76,87 +83,161 @@
               </div>
               <span class="step-label">Profile</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Register Form -->
-        <transition name="slide-fade" mode="out-in">
-          <div v-if="activeView === 'register'" key="register" class="auth-card">
-            <div class="card-header">
-              <h2 class="card-title">Create Account</h2>
-              <p class="card-subtitle">Join the MindForge community</p>
+            <div class="step" :class="{ active: activeView === 'settings' }">
+              <div class="step-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 1v6m0 0l-4-4m4 4l4-4m0 16v6m0-6l4 4m-4-4l-4 4"/>
+                  <circle cx="12" cy="9" r="3"/>
+                  <path d="M12 15v3"/>
+                </svg>
+              </div>
+              <span class="step-label">Settings</span>
+                </div>
             </div>
 
-            <form @submit.prevent="handleRegister" class="auth-form">
-              <div class="form-group">
-                <label class="form-label">Username</label>
-                <div class="input-wrapper">
-                  <input
-                    v-model="registerForm.username"
-                    type="text"
-                    class="form-input"
-                    placeholder="Choose a username"
-                    required
-                    minlength="3"
-                    maxlength="50"
-                    :disabled="isLoading"
-                  />
-                  <div class="input-icon">
-                    <svg viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
 
-              <div class="form-group">
-                <label class="form-label">Password</label>
-                <div class="input-wrapper">
-                  <input
-                    v-model="registerForm.password"
-                    type="password"
-                    class="form-input"
-                    placeholder="Create a password"
-                    required
-                    minlength="6"
-                    :disabled="isLoading"
-                  />
-                  <div class="input-icon">
-                    <svg viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
 
-              <button type="submit" class="btn-primary" :disabled="isLoading">
-                <span v-if="isLoading" class="btn-spinner"></span>
-                <span v-else>Create Account</span>
-              </button>
-            </form>
+             <form @submit.prevent="handleRegister" class="auth-form">
+               <div class="form-group">
+                 <label class="form-label">Username</label>
+                 <div class="input-wrapper">
+                   <input
+                     v-model="registerForm.username"
+                     type="text"
+                     class="form-input"
+                     placeholder="Choose a username"
+                     required
+                     :disabled="isLoading"
+                   />
+                   <div class="input-icon">
+                     <svg viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                     </svg>
+                   </div>
+                 </div>
+               </div>
 
-            <!-- Success Message -->
-            <transition name="bounce">
-              <div v-if="registerSuccess" class="success-message">
-                <div class="success-icon">✓</div>
-                <p>Account created successfully!</p>
-                <button @click="setActiveView('login')" class="link-btn">
-                  Proceed to login
-                </button>
-              </div>
-            </transition>
+               <div class="form-group">
+                 <label class="form-label">Password</label>
+                 <div class="input-wrapper">
+                   <input
+                     v-model="registerForm.password"
+                     type="password"
+                     class="form-input"
+                     placeholder="Create a password"
+                     required
+                     :disabled="isLoading"
+                   />
+                   <div class="input-icon">
+                     <svg viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                     </svg>
+                   </div>
+                 </div>
+               </div>
 
-            <!-- Error Message -->
-            <transition name="shake">
-              <div v-if="registerError" class="error-message">
-                <div class="error-icon">⚠</div>
-                <p>{{ registerError }}</p>
-              </div>
-            </transition>
-          </div>
 
-          <!-- Login Form -->
-          <div v-else-if="activeView === 'login'" key="login" class="auth-card">
+
+               <button type="submit" class="btn-primary" :disabled="isLoading">
+                 <span v-if="isLoading" class="btn-spinner"></span>
+                 <span v-else>Create Account</span>
+               </button>
+             </form>
+
+             <!-- Success Message -->
+             <transition name="bounce">
+               <div v-if="registerSuccess" class="success-message">
+                 <div class="success-icon">✓</div>
+                 <p>Account created successfully!</p>
+                 <button @click="setActiveView('login')" class="link-btn">
+                   Proceed to login
+                 </button>
+               </div>
+             </transition>
+
+             <!-- Error Message -->
+             <transition name="shake">
+               <div v-if="registerError" class="error-message">
+                 <div class="error-icon">⚠</div>
+                 <p>{{ registerError }}</p>
+               </div>
+             </transition>
+            </div>
+
+           <!-- Register Form -->
+           <div v-if="activeView === 'register'" key="register" class="auth-card">
+             <div class="card-header">
+               <h2 class="card-title">Create Account</h2>
+               <p class="card-subtitle">Join MindForge today</p>
+             </div>
+
+             <form @submit.prevent="handleRegister" class="auth-form">
+               <div class="form-group">
+                 <label class="form-label">Username</label>
+                 <div class="input-wrapper">
+                   <input
+                     v-model="registerForm.username"
+                     type="text"
+                     class="form-input"
+                     placeholder="Choose a username"
+                     required
+                     :disabled="isLoading"
+                   />
+                   <div class="input-icon">
+                     <svg viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                     </svg>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="form-group">
+                 <label class="form-label">Password</label>
+                 <div class="input-wrapper">
+                   <input
+                     v-model="registerForm.password"
+                     type="password"
+                     class="form-input"
+                     placeholder="Create a password"
+                     required
+                     :disabled="isLoading"
+                   />
+                   <div class="input-icon">
+                     <svg viewBox="0 0 20 20" fill="currentColor">
+                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                     </svg>
+                   </div>
+                 </div>
+               </div>
+
+               <button type="submit" class="btn-primary" :disabled="isLoading">
+                 <span v-if="isLoading" class="btn-spinner"></span>
+                 <span v-else>Create Account</span>
+               </button>
+             </form>
+
+             <!-- Success Message -->
+             <transition name="bounce">
+               <div v-if="registerSuccess" class="success-message">
+                 <div class="success-icon">✓</div>
+                 <p>Account created successfully!</p>
+                 <button @click="setActiveView('login')" class="link-btn">
+                   Proceed to login
+                 </button>
+               </div>
+             </transition>
+
+             <!-- Error Message -->
+             <transition name="shake">
+               <div v-if="registerError" class="error-message">
+                 <div class="error-icon">⚠</div>
+                 <p>{{ registerError }}</p>
+               </div>
+             </transition>
+           </div>
+
+           <!-- Login Form -->
+           <div v-else-if="activeView === 'login'" key="login" class="auth-card">
             <div class="card-header">
               <h2 class="card-title">Welcome Back</h2>
               <p class="card-subtitle">Sign in to your account</p>
@@ -201,6 +282,20 @@
                 </div>
               </div>
 
+              <!-- Remember Me Checkbox -->
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input
+                    v-model="loginForm.rememberMe"
+                    type="checkbox"
+                    class="checkbox-input"
+                    :disabled="isLoading"
+                  />
+                  <span class="checkbox-mark"></span>
+                  <span class="checkbox-text">Remember me for 30 days</span>
+                </label>
+              </div>
+
               <button type="submit" class="btn-primary" :disabled="isLoading">
                 <span v-if="isLoading" class="btn-spinner"></span>
                 <span v-else>Sign In</span>
@@ -239,6 +334,14 @@
                 <span v-if="isLoading" class="btn-spinner"></span>
                 <span v-else>Load Profile</span>
               </button>
+            </div>
+
+            <!-- Loading State -->
+            <div v-else-if="profileLoading" class="profile-loading">
+              <div class="skeleton skeleton-avatar"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text short"></div>
+              <div class="skeleton skeleton-button"></div>
             </div>
 
             <!-- User Info -->
@@ -288,8 +391,24 @@
               </div>
             </transition>
           </div>
-        </transition>
-      </div>
+
+          <!-- Settings View -->
+          <div v-else-if="activeView === 'settings'" key="settings" class="auth-card">
+            <div class="card-header">
+              <h2 class="card-title">Account Settings</h2>
+              <p class="card-subtitle">Manage your account preferences</p>
+            </div>
+
+            <div class="settings-actions">
+              <button @click="setActiveView('profile')" class="btn-secondary">
+                ← Back to Profile
+              </button>
+              <button @click="logout" class="btn-outline">
+                Sign Out
+              </button>
+            </div>
+           </div>
+       </div>
     </main>
   </div>
 </template>
@@ -299,7 +418,7 @@ import { ref, computed, onMounted } from 'vue'
 import { authApi, type AuthToken, type UserInfo, type UserRegister } from '../api/auth'
 
 // Reactive state
-const activeView = ref<'register' | 'login' | 'profile'>('register')
+const activeView = ref<'register' | 'login' | 'profile' | 'settings'>('register')
 const isLoading = ref(false)
 
 // Forms
@@ -310,7 +429,8 @@ const registerForm = ref<UserRegister>({
 
 const loginForm = ref({
   username: '',
-  password: ''
+  password: '',
+  rememberMe: false
 })
 
 // Messages
@@ -321,13 +441,38 @@ const loginError = ref('')
 const profileError = ref('')
 const userInfo = ref<UserInfo | null>(null)
 
+// Loading states
+const profileLoading = ref(false)
+
+
+
+
+
 // Computed
 const isLoggedIn = computed(() => {
-  return localStorage.getItem('jwt') !== null
+  const token = localStorage.getItem('jwt')
+  if (!token) return false
+
+  const expiresAt = localStorage.getItem('jwt_expires')
+  if (expiresAt) {
+    const expirationTime = parseInt(expiresAt)
+    if (Date.now() > expirationTime) {
+      // Token expired, remove it
+      localStorage.removeItem('jwt')
+      localStorage.removeItem('jwt_expires')
+      return false
+    }
+  }
+
+  return true
 })
 
+
+
+
+
 // Methods
-const setActiveView = (view: 'register' | 'login' | 'profile') => {
+const setActiveView = (view: 'register' | 'login' | 'profile' | 'settings') => {
   activeView.value = view
   // Clear messages when switching views
   registerSuccess.value = null
@@ -370,11 +515,19 @@ const handleLogin = async () => {
     const token = await authApi.login(loginForm.value)
     loginSuccess.value = token
 
-    // Store JWT token
-    localStorage.setItem('jwt', token.token)
+    // Store JWT token with expiration if remember me is checked
+    if (loginForm.value.rememberMe) {
+      const expiration = Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+      localStorage.setItem('jwt', token.token)
+      localStorage.setItem('jwt_expires', expiration.toString())
+    } else {
+      localStorage.setItem('jwt', token.token)
+      localStorage.removeItem('jwt_expires') // Remove expiration for session-only
+    }
 
-    // Reset form
-    loginForm.value = { username: '', password: '' }
+    // Reset form but keep remember me setting
+    const rememberMe = loginForm.value.rememberMe
+    loginForm.value = { username: '', password: '', rememberMe }
 
   } catch (error: any) {
     if (error.response?.status === 401) {
@@ -388,7 +541,7 @@ const handleLogin = async () => {
 }
 
 const fetchUserInfo = async () => {
-  isLoading.value = true
+  profileLoading.value = true
   profileError.value = ''
   userInfo.value = null
 
@@ -403,7 +556,7 @@ const fetchUserInfo = async () => {
       profileError.value = 'Failed to load profile. Please try again.'
     }
   } finally {
-    isLoading.value = false
+    profileLoading.value = false
   }
 }
 
@@ -644,6 +797,164 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
+.form-input.input-error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.form-input.input-success {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.field-success {
+  color: #10b981;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 0.5rem;
+}
+
+.strength-meter {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.strength-bar {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.strength-0 { background: #991b1b; }
+.strength-1 { background: #dc2626; }
+.strength-2 { background: #d97706; }
+.strength-3 { background: #059669; }
+.strength-4 { background: #10b981; }
+
+.strength-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Checkbox Styling */
+.checkbox-group {
+  margin-top: 1rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #cccccc;
+  user-select: none;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-mark {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  transition: all 0.3s ease;
+  background: rgba(20, 20, 20, 0.8);
+}
+
+.checkbox-input:checked + .checkbox-mark {
+  background: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%);
+  border-color: #00ffff;
+}
+
+.checkbox-input:checked + .checkbox-mark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checkbox-text {
+  transition: color 0.3s ease;
+}
+
+.checkbox-input:checked ~ .checkbox-text {
+  color: #00ffff;
+}
+
+.checkbox-input:disabled ~ .checkbox-mark,
+.checkbox-input:disabled ~ .checkbox-text {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+.skeleton-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 2rem auto;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-button {
+  height: 3rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .input-icon {
   position: absolute;
   left: 1rem;
@@ -737,6 +1048,47 @@ onMounted(() => {
 
 .link-btn:hover {
   color: #5a67d8;
+}
+
+.settings-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-secondary {
+  padding: 0.875rem 1.5rem;
+  background: rgba(100, 100, 100, 0.8);
+  color: #ffffff;
+  border: 2px solid rgba(150, 150, 150, 0.5);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(120, 120, 120, 0.9);
+  border-color: rgba(180, 180, 180, 0.7);
+}
+
+.btn-outline {
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  color: #dc2626;
+  border: 2px solid #dc2626;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: #dc2626;
+  color: white;
 }
 
 /* Loading Spinner */

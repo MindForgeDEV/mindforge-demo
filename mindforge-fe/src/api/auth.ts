@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 
 // API base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -65,6 +65,18 @@ export const authApi = {
   // Get current user info
   me: async (): Promise<UserInfo> => {
     const response: AxiosResponse<UserInfo> = await apiClient.get('/auth/me');
+    return response.data;
+  },
+
+  // Update user profile
+  updateProfile: async (userData: UserRegister): Promise<UserInfo> => {
+    const response: AxiosResponse<UserInfo> = await apiClient.put('/auth/profile', userData);
+    return response.data;
+  },
+
+  // Delete user account
+  deleteUser: async (username: string): Promise<void> => {
+    const response: AxiosResponse<void> = await apiClient.delete(`/auth/users/${username}`);
     return response.data;
   },
 };

@@ -1,0 +1,47 @@
+stages:
+  - build
+  - test
+
+backend_build:
+  stage: build
+  image: openjdk:21-jdk
+  script:
+    - cd mindforge-be
+    - ./gradlew build
+  artifacts:
+    paths:
+      - mindforge-be/build/libs/
+    expire_in: 1 hour
+
+frontend_build:
+  stage: build
+  image: node:18
+  script:
+    - cd mindforge-fe
+    - npm install
+    - npx vue-tsc --noEmit
+    - npm run test:run
+    - npm run build
+  artifacts:
+    paths:
+      - mindforge-fe/dist/
+    expire_in: 1 hour
+
+backend_test:
+  stage: test
+  image: openjdk:21-jdk
+  script:
+    - cd mindforge-be
+    - ./gradlew test
+  dependencies:
+    - backend_build
+
+frontend_test:
+  stage: test
+  image: node:18
+  script:
+    - cd mindforge-fe
+    - npm install
+    - npm run test:run
+  dependencies:
+    - frontend_build

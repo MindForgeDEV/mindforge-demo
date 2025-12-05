@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import mindforge.config.RateLimitingFilter;
+
 @Configuration
 @Profile("!test")
 public class SecurityConfig {
@@ -25,15 +27,19 @@ public class SecurityConfig {
   private String frontendUrl;
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigSource, JwtDecoder jwtDecoder)
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigSource, JwtDecoder jwtDecoder, RateLimitingFilter rateLimitingFilter)
       throws Exception {
     http
         .csrf(csrf -> csrf.disable())
         .cors(cors -> cors.configurationSource(corsConfigSource))
+        .addFilterBefore(rateLimitingFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/register", "/auth/login").permitAll()
+            .requestMatchers("/api/health", "/auth/register", "/auth/login").permitAll()
             .anyRequest().authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)));
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)))
+        .headers(headers -> headers
+            .frameOptions().deny()
+            .contentTypeOptions());
     return http.build();
   }
 

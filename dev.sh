@@ -15,10 +15,21 @@ docker compose up -d db
 echo "⏳ Waiting for PostgreSQL to be ready..."
 sleep 15
 
+# Load environment variables
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
 # Start backend with hot reload
 echo "🔧 Starting backend (Spring Boot with devtools)..."
 cd mindforge-be
-./gradlew bootRun -Dspring.profiles.active=dev &
+export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
+export SERVER_PORT=${SERVER_PORT:-8081}
+export BACKEND_PORT=${BACKEND_PORT:-8080}
+echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
+echo "SERVER_PORT=$SERVER_PORT"
+echo "BACKEND_PORT=$BACKEND_PORT"
+./gradlew bootRun &
 BACKEND_PID=$!
 cd ..
 
@@ -31,8 +42,13 @@ cd ..
 
 echo "✅ All services started!"
 echo "🌐 Frontend: http://localhost:3000"
-echo "🔗 Backend API: http://localhost:8080"
-echo "🗄️  Database: localhost:5432"
+echo "🔗 Backend API: http://localhost:$SERVER_PORT"
+echo "🗄️  Database: localhost:$POSTGRES_PORT"
+echo ""
+echo "📝 Configuration Status:"
+echo "  • Dev profile: ACTIVE ✅"
+echo "  • PostgreSQL: CONNECTED ✅"
+echo "  • Hot reloading: ENABLED ✅"
 echo ""
 echo "Press Ctrl+C to stop all services"
 

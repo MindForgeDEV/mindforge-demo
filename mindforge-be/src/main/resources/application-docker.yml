@@ -1,0 +1,40 @@
+spring:
+   datasource:
+     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/mindforge}
+     username: ${POSTGRES_USER:devuser}
+     password: ${POSTGRES_PASSWORD:devpass}
+     driver-class-name: org.postgresql.Driver
+
+    jpa:
+      hibernate:
+        ddl-auto: validate
+      show-sql: true
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+   liquibase:
+     enabled: false
+   sql:
+     init:
+       mode: always
+
+server:
+  port: ${SERVER_PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:verylongrandomstringwithatleast32chars!!!}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:3000}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:DEBUG}
+    mindforge: ${LOG_LEVEL:DEBUG}
+
+# Disable security features for development
+rate-limiting:
+  enabled: false
+
+security-headers:
+  enabled: false

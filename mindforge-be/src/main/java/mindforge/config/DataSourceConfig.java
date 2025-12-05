@@ -20,23 +20,23 @@ public class DataSourceConfig {
   @Value("${POSTGRES_PASSWORD:}")
   private String dbPassword;
 
-  @Bean
-  @Profile({ "dev", "prod" })
-  public DataSource postgresDataSource() {
-    return DataSourceBuilder.create()
-        .url(dbUrl)
-        .username(dbUser)
-        .password(dbPassword)
-        .build();
-  }
+   @Bean
+   @Profile({ "dev", "prod" })
+   public DataSource postgresDataSource() {
+     return DataSourceBuilder.create()
+         .url(dbUrl)
+         .username(dbUser)
+         .password(dbPassword)
+         .build();
+   }
 
-  @Bean
-  @Profile("test")
-  public DataSource h2DataSource() {
-    return DataSourceBuilder.create()
-        .url("jdbc:h2:mem:mindforge;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
-        .driverClassName("org.h2.Driver")
-        .username("sa")
-        .build();
-  }
+   @Bean
+   @Profile("test")
+   public DataSource h2DataSource() {
+     return DataSourceBuilder.create()
+         .url("jdbc:h2:mem:mindforge;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
+         .driverClassName("org.h2.Driver")
+         .username("sa")
+         .build();
+   }
 }

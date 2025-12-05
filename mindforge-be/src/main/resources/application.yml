@@ -2,22 +2,19 @@ spring:
   application:
     name: mindforge
   liquibase:
-    enabled: false
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    enabled: ${LIQUIBASE_ENABLED:true}
   output:
     ansi:
       enabled: always
 
-jwt:
-  secret: verylongrandomstringwithatleast32charactersforjwttesting!!!
-  expiration: 3600000
-
-frontend:
-  url: http://localhost:3000
-
 server:
   port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

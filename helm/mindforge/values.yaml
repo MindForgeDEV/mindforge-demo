@@ -1,0 +1,30 @@
+# Default values for mindforge.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: mindforge/mindforge-be
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: mindforge.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+configmap:
+  data:
+    SPRING_PROFILES_ACTIVE: prod
+    DATABASE_URL: jdbc:postgresql://postgres:5432/mindforge
