@@ -13,6 +13,15 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'e2e-tests',
+      testDir: './tests',
+      testMatch: '**/*.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        headless: true, // Run in headless mode
+      },
+    },
+    {
       name: 'visual-regression',
       testMatch: '**/*.visual.spec.ts',
       use: {
