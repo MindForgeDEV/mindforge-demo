@@ -7,6 +7,7 @@ import mindforge.dto.UserResponseDto;
 import mindforge.service.AuthenticationService;
 import mindforge.service.JwtService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -98,6 +99,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/users/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a user account")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "User deleted successfully"),
