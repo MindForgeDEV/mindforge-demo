@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 
 // API base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -57,6 +57,20 @@ export interface UserInfo {
   avatarUrl?: string;
 }
 
+export interface AdminUserInfo {
+  id: number;
+  username: string;
+  role: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
+  accountLocked?: boolean;
+  failedLoginAttempts?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // API methods
 export const authApi = {
   // Register a new user
@@ -102,6 +116,43 @@ export const authApi = {
   // Delete user account
   deleteUser: async (username: string): Promise<void> => {
     const response: AxiosResponse<void> = await apiClient.delete(`/auth/users/${username}`);
+    return response.data;
+  },
+
+  // Admin API methods
+  // Get all users (admin only)
+  getAllUsers: async (): Promise<AdminUserInfo[]> => {
+    const response: AxiosResponse<AdminUserInfo[]> = await apiClient.get('/api/admin/users');
+    return response.data;
+  },
+
+  // Get user by ID (admin only)
+  getUserById: async (userId: number): Promise<AdminUserInfo> => {
+    const response: AxiosResponse<AdminUserInfo> = await apiClient.get(`/api/admin/users/${userId}`);
+    return response.data;
+  },
+
+  // Update user role (admin only)
+  updateUserRole: async (userId: number, role: string): Promise<AdminUserInfo> => {
+    const response: AxiosResponse<AdminUserInfo> = await apiClient.put(`/api/admin/users/${userId}/role?role=${role}`);
+    return response.data;
+  },
+
+  // Delete user (admin only)
+  adminDeleteUser: async (userId: number): Promise<void> => {
+    const response: AxiosResponse<void> = await apiClient.delete(`/api/admin/users/${userId}`);
+    return response.data;
+  },
+
+  // Lock user account (admin only)
+  lockUserAccount: async (userId: number): Promise<AdminUserInfo> => {
+    const response: AxiosResponse<AdminUserInfo> = await apiClient.post(`/api/admin/users/${userId}/lock`);
+    return response.data;
+  },
+
+  // Unlock user account (admin only)
+  unlockUserAccount: async (userId: number): Promise<AdminUserInfo> => {
+    const response: AxiosResponse<AdminUserInfo> = await apiClient.post(`/api/admin/users/${userId}/unlock`);
     return response.data;
   },
 };

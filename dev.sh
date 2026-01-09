@@ -24,7 +24,7 @@ fi
 echo "🔧 Starting backend (Spring Boot with devtools)..."
 cd mindforge-be
 export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
-export SERVER_PORT=${SERVER_PORT:-8081}
+export SERVER_PORT=${SERVER_PORT:-8080}
 export BACKEND_PORT=${BACKEND_PORT:-8080}
 echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
 echo "SERVER_PORT=$SERVER_PORT"

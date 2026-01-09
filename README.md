@@ -24,6 +24,7 @@ A modern, production-ready full-stack web application demonstrating enterprise-g
 - **Beautiful Animated UI** with smooth transitions and modern design
 - **Modern Vue 3** with Composition API and TypeScript
 - **Animated Auth Flow** with register, login, and profile views
+- **3D Data Visualization** with Three.js interactive scenes and user data mapping
 - **Responsive Design** with mobile-first approach and glassmorphism effects
 - **Type-Safe Development** with strict TypeScript configuration
 - **Component Architecture** with reusable Vue components
@@ -77,12 +78,15 @@ mindforge-fe/
 ├── api/             # Centralized API layer
 │   └── auth.ts                # Authentication API client
 ├── components/      # Vue 3 Composition API components
-│   ├── LoginButton.vue        # User login form
-│   ├── RegisterButton.vue     # User registration form
-│   └── MeButton.vue           # User profile display
+│   ├── AuthFlow.vue           # Complete authentication flow
+│   ├── Dashboard.vue          # User dashboard with 3D scene access
+│   ├── Scene3D.vue            # Three.js 3D data visualization
+│   ├── LoginForm.vue          # Login form component
+│   ├── RegisterForm.vue       # Registration form component
+│   └── ProfileView.vue        # User profile display
 ├── tests/           # Test files (excluded from build)
 │   ├── auth.spec.ts           # API client tests
-│   └── LoginButton.spec.ts    # Component tests
+│   └── auth-flow.spec.ts      # Authentication flow tests
 ├── App.vue          # Root application component
 ├── main.ts          # Vue application entry point
 └── style.css        # Global application styles
@@ -138,7 +142,7 @@ mindforge-fe/
 ```bash
 # Backend tests
 cd mindforge-be
-./gradlew test                    # All tests (17 tests, all passing ✅)
+./gradlew test                    # All tests (18 tests, all passing ✅)
 ./gradlew test --tests "*UnitTest*"    # Unit tests only (5 tests)
 ./gradlew test --tests "*IntegrationTest*"  # Integration tests (9 tests)
 ./gradlew test --tests "*PerformanceTest*"  # Performance tests only (3 tests)
@@ -180,7 +184,7 @@ POSTGRES_PORT=5432
 # Application Ports
 BACKEND_PORT=8080
 FRONTEND_PORT=80
-SERVER_PORT=8081
+SERVER_PORT=8080
 
 # Security
 JWT_SECRET=verylongrandomstringwithatleast32charactersforjwttesting!!!
@@ -188,7 +192,7 @@ JWT_EXPIRATION=3600000
 
 # URLs
 FRONTEND_URL=http://localhost:3000
-VITE_API_URL=http://localhost:8081
+VITE_API_URL=http://localhost:8080
 ```
 
 #### Profile-Specific Configuration
@@ -198,13 +202,19 @@ VITE_API_URL=http://localhost:8081
 
 ### 3. Development Environment (Recommended)
 
-#### Using Nix (Reproducible)
+#### Quick Demo Setup (Easiest) 🚀
 ```bash
-# If you have Nix installed
-nix develop
+# Start the complete development environment
+./demo.sh setup
+
+# This will:
+# - Start PostgreSQL database
+# - Build and start Spring Boot backend
+# - Build and start Vue.js frontend
+# - Enable hot-reloading for both backend and frontend
 ```
 
-#### Manual Setup
+#### Manual Setup (Alternative)
 ```bash
 # Backend
 cd mindforge-be
@@ -213,9 +223,10 @@ cd mindforge-be
 # Frontend
 cd ../mindforge-fe
 npm install
+npm run dev
 ```
 
-### 3. Run with Docker Compose (Full Stack) 🚀
+#### Using Docker Compose (Full Stack)
 ```bash
 # Start all services (PostgreSQL, Spring Boot backend, Vue.js frontend)
 podman-compose up --build
@@ -226,39 +237,64 @@ docker-compose up --build
 
 ### 4. Access the Application
 - **🎨 Frontend**: http://localhost:3000 (Beautiful animated Vue.js application)
-- **🔧 Backend API**: http://localhost:8081 (Spring Boot REST API)
-- **📚 API Documentation**: http://localhost:8081/swagger-ui.html (protected)
+- **🔧 Backend API**: http://localhost:8080 (Spring Boot REST API)
+- **📚 API Documentation**: http://localhost:8080/swagger-ui.html (OpenAPI/Swagger)
+- **💊 Health Check**: http://localhost:8080/actuator/health (Monitoring endpoint)
 - **🗄️ Database**: PostgreSQL running on port 5432
 
-### 5. Experience the Beautiful Auth Flow
+### 5. Experience the Full Application
+
+#### Authentication Flow
 1. **Register**: Create a new account with smooth animations
 2. **Login**: Sign in with beautiful form transitions
-3. **Profile**: View your user information with elegant design
-4. **Logout**: Sign out and return to the auth flow
+3. **Dashboard**: Access your personalized dashboard
+4. **3D Visualization**: Click "View 3D Scene" for interactive data visualization
+5. **Profile**: View your user information with elegant design
+6. **Logout**: Sign out and return to the auth flow
 
-The interface features:
+#### 3D Data Visualization Feature ✨
+The application includes a stunning 3D visualization that maps user data to interactive Three.js objects:
+- **Dynamic Spheres**: Size based on username length
+- **Color Coding**: Different colors for user roles
+- **Interactive Elements**: Hover effects and animations
+- **Real-time Updates**: Data-driven visual representations
+- **Accessibility**: Reduced motion support and ARIA labels
+
+#### Interface Features
 - ✨ Glassmorphism design with backdrop blur effects
 - 🎭 Smooth slide transitions between auth states
 - 💫 Floating animated background elements
 - 🎨 Gradient buttons with hover effects
 - 📱 Fully responsive design
 - ⚡ Loading states and error animations
+- 🎯 Step indicators for multi-stage processes
 
-### 5. Test the Authentication Flow
+### 6. Test the Application
+
+#### Demo Users
+The application comes pre-configured with test accounts:
+- **Admin**: `admin` / `mindforge123`
+- **User**: `testuser1` / `mindforge123`
+- **User**: `testuser2` / `mindforge123`
+
+#### API Testing
 ```bash
 # Register a new user
-curl -X POST http://localhost:8081/auth/register \
+curl -X POST http://localhost:8080/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpass123"}'
+  -d '{"username": "newuser", "password": "securepass123"}'
 
 # Login and get JWT token
-curl -X POST http://localhost:8081/auth/login \
+curl -X POST http://localhost:8080/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpass123"}'
+  -d '{"username": "admin", "password": "mindforge123"}'
 
 # Access protected endpoint with token
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8081/auth/me
+  http://localhost:8080/auth/me
+
+# Health check (public endpoint)
+curl http://localhost:8080/actuator/health
 ```
 
 ### 5. Manual Development Setup
@@ -307,7 +343,7 @@ cd mindforge-be
 ```bash
 cd mindforge-be
 
-# Run all tests (17 tests, all passing)
+# Run all tests (18 tests, all passing)
 ./gradlew test
 
 # Run specific test class
@@ -397,8 +433,8 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### OpenAPI Specification
-- **Swagger UI**: http://localhost:8081/swagger-ui.html
-- **OpenAPI JSON**: http://localhost:8081/v3/api-docs
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
 - **Specification File**: `mindforge-be/src/main/openapi/openapi.yaml`
 
 ## 🔧 Development Workflow
@@ -519,6 +555,7 @@ JWT_SECRET=production-specific-jwt-secret-32-chars-minimum
 ### ✅ Completed Features
 - **Beautiful Animated UI**: Modern glassmorphism design with smooth transitions ✅ WORKING
 - **Animated Auth Workflow**: Register → Login → Profile with beautiful animations ✅ WORKING
+- **3D Data Visualization**: Interactive Three.js scenes with user data mapping ✅ WORKING
 - **JWT Authentication**: Secure token-based authentication system ✅ WORKING
 - **User Management**: Registration, login, and profile access ✅ WORKING
 - **RESTful API**: OpenAPI 3.1 documented endpoints with hybrid implementation ✅ WORKING
@@ -527,19 +564,21 @@ JWT_SECRET=production-specific-jwt-secret-32-chars-minimum
 - **Clean Architecture**: Layered backend with clear separation of concerns ✅ WORKING
 - **Database Integration**: PostgreSQL with JPA/Hibernate ✅ WORKING
 - **Containerization**: Docker & Docker Compose deployment ✅ WORKING
-- **Testing Infrastructure**: Comprehensive backend tests (17/17 passing) ✅ WORKING
+- **Testing Infrastructure**: Comprehensive backend tests (18/18 passing) ✅ WORKING
 - **Development Tools**: Nix flakes, hot reload, multi-environment support ✅ WORKING
 - **Security**: Enterprise-grade authentication and authorization ✅ WORKING
 - **Code Quality**: Lombok optimization, environment variables, best practices ✅ WORKING
 
 ### 🚧 **CURRENT DEVELOPMENT STATUS**
 - **Frontend**: http://localhost:3000 (Vue.js application running with hot reload)
-- **Backend API**: http://localhost:8081 (Spring Boot REST API running)
+- **Backend API**: http://localhost:8080 (Spring Boot REST API running)
+- **3D Visualization**: Interactive Three.js scenes accessible from dashboard ✅ WORKING
 - **Database**: PostgreSQL 16 with automatic schema creation ✅ WORKING
 - **Authentication**: JWT-based with secure token management ✅ WORKING
 - **Configuration Modes**: Dev profile activation and database connectivity ✅ WORKING
 - **Code Quality**: Lombok DTO optimization, environment variables, security hardening ✅ WORKING
-- **Testing**: 17 backend tests + 3 frontend tests, all passing ✅ WORKING
+- **Testing**: 18 backend tests + 3 frontend tests, all passing ✅ WORKING
+- **Demo Environment**: Fully automated setup with `./demo.sh setup` ✅ WORKING
 
 ### 🎯 Future Enhancements
 - **Advanced Security**: OAuth2 integration, MFA support
@@ -562,10 +601,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Documentation
 
-- **[VISION.md](VISION.md)** - Project vision and long-term goals
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Comprehensive system architecture and design patterns
+**Comprehensive project documentation is maintained in the agent memory system for internal reference:**
+
+- **Project Architecture** - System design, technology stack, and design patterns
+- **Environment Configuration** - Setup guides, profiles, and best practices
+- **Development Status** - Current features, testing results, and roadmap
+- **Project Vision** - Mission, goals, and long-term strategic direction
+
+**Quick Start Resources:**
+- **Demo Script**: `./demo.sh setup` - One-command full environment setup
+- **API Documentation**: http://localhost:8080/swagger-ui.html - Interactive API docs
+- **Health Check**: http://localhost:8080/actuator/health - Application monitoring
 - **[AGENTS.md](AGENTS.md)** - Development workflow and coding standards
-- **[TODO.md](TODO.md)** - Current development tasks and roadmap
+- **Agent Memory System** - Comprehensive project documentation and development status
 - **[API Documentation](http://localhost:8080/swagger-ui.html)** - Interactive API docs (when running)
 
 ## 🤝 Professional Standards

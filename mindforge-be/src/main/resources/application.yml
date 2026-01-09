@@ -3,6 +3,7 @@ spring:
     name: mindforge
   liquibase:
     enabled: ${LIQUIBASE_ENABLED:true}
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   output:
     ansi:
       enabled: always

@@ -175,7 +175,7 @@ test_env_file ".env.prod" "prod"
 test_env_file ".env.test" "test"
 
 # Test Spring Boot configurations
-test_spring_config "dev" "8081"
+test_spring_config "dev" "8080"
 test_spring_config "prod" "8080"
 test_spring_config "test" "8082"
 

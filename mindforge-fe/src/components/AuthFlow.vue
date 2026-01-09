@@ -92,79 +92,11 @@
                 </svg>
               </div>
               <span class="step-label">Settings</span>
-                </div>
-            </div>
+             </div>
+           </div>
+         </div>
 
-
-
-             <form @submit.prevent="handleRegister" class="auth-form">
-               <div class="form-group">
-                 <label class="form-label">Username</label>
-                 <div class="input-wrapper">
-                   <input
-                     v-model="registerForm.username"
-                     type="text"
-                     class="form-input"
-                     placeholder="Choose a username"
-                     required
-                     :disabled="isLoading"
-                   />
-                   <div class="input-icon">
-                     <svg viewBox="0 0 20 20" fill="currentColor">
-                       <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                     </svg>
-                   </div>
-                 </div>
-               </div>
-
-               <div class="form-group">
-                 <label class="form-label">Password</label>
-                 <div class="input-wrapper">
-                   <input
-                     v-model="registerForm.password"
-                     type="password"
-                     class="form-input"
-                     placeholder="Create a password"
-                     required
-                     :disabled="isLoading"
-                   />
-                   <div class="input-icon">
-                     <svg viewBox="0 0 20 20" fill="currentColor">
-                       <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                     </svg>
-                   </div>
-                 </div>
-               </div>
-
-
-
-               <button type="submit" class="btn-primary" :disabled="isLoading">
-                 <span v-if="isLoading" class="btn-spinner"></span>
-                 <span v-else>Create Account</span>
-               </button>
-             </form>
-
-             <!-- Success Message -->
-             <transition name="bounce">
-               <div v-if="registerSuccess" class="success-message">
-                 <div class="success-icon">✓</div>
-                 <p>Account created successfully!</p>
-                 <button @click="setActiveView('login')" class="link-btn">
-                   Proceed to login
-                 </button>
-               </div>
-             </transition>
-
-             <!-- Error Message -->
-             <transition name="shake">
-               <div v-if="registerError" class="error-message">
-                 <div class="error-icon">⚠</div>
-                 <p>{{ registerError }}</p>
-               </div>
-             </transition>
-            </div>
-
-           <!-- Register Form -->
+         <!-- Register Form -->
            <div v-if="activeView === 'register'" key="register" class="auth-card">
              <div class="card-header">
                <h2 class="card-title">Create Account</h2>
@@ -1360,6 +1292,11 @@ onMounted(() => {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.step-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .step.active .step-icon {

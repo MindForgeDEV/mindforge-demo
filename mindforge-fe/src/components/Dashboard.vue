@@ -2,13 +2,17 @@
   <div class="dashboard">
     <header class="dashboard-header">
       <h1>Mindforge Dashboard</h1>
-      <div class="user-info">
+      <div v-if="user" class="user-info">
         <img v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.username" class="avatar" />
         <div class="user-details">
           <p>Welcome, {{ user.firstName || user.username }}!</p>
           <p>Role: {{ user.role }}</p>
         </div>
+        <button v-if="user.role === 'ADMIN'" @click="goToAdmin" class="admin-btn">Admin Panel</button>
         <button @click="logout" class="logout-btn">Logout</button>
+      </div>
+      <div v-else class="user-info">
+        <p>Loading user information...</p>
       </div>
     </header>
 

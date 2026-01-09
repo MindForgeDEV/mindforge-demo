@@ -73,17 +73,16 @@
     >
       <TresBoxGeometry :args="[0.5, roleHeight, 0.5]" />
       <TresMeshStandardMaterial :color="roleHover ? 'lightgreen' : 'green'" />
-      </TresMesh>
-    </TresLOD>
+    </TresMesh>
   </TresCanvas>
-  </div>
+</div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRenderLoop } from '@tresjs/core'
-import { TresCanvas, TresPerspectiveCamera, TresDirectionalLight, TresAmbientLight, TresMesh, TresBoxGeometry, TresMeshStandardMaterial, TresSphereGeometry, TresLOD } from '@tresjs/core'
+import { TresCanvas } from '@tresjs/core'
 import { OrbitControls } from '@tresjs/cientos'
+import { useLoop } from '@tresjs/core'
 import { authApi, type UserInfo } from '@/api/auth'
 
 const user = ref<UserInfo | null>(null)
@@ -102,10 +101,10 @@ const roleHover = ref(false)
 
 const prefersReducedMotion = ref(false)
 
-const { onLoop } = useRenderLoop()
+const { onRender } = useLoop()
 
 // Animation loop
-onLoop(() => {
+onRender(() => {
   if (!prefersReducedMotion.value) {
     sphereRotation.value += 0.01 * (user.value?.username.length || 1) * 0.1
     cubeRotation.value += 0.005

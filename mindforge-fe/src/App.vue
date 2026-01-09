@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import AuthFlow from './components/AuthFlow.vue'
 
 const showSplash = ref(true)
 

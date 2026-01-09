@@ -36,7 +36,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigSource))
         .addFilterBefore(rateLimitingFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/health", "/auth/register", "/auth/login").permitAll()
+            .requestMatchers("/actuator/health", "/api/health", "/auth/register", "/auth/login").permitAll()
             .anyRequest().authenticated())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)))
         .headers(headers -> headers

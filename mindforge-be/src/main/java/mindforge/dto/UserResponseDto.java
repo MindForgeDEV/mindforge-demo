@@ -42,6 +42,18 @@ public class UserResponseDto {
      @Schema(description = "Last name of the user", example = "Doe")
      private String lastName;
 
-     @Schema(description = "Avatar URL of the user", example = "https://example.com/avatar.jpg")
-     private String avatarUrl;
+      @Schema(description = "Avatar URL of the user", example = "https://example.com/avatar.jpg")
+      private String avatarUrl;
+
+      @Schema(description = "Whether the account is locked", example = "false")
+      private Boolean accountLocked;
+
+      @Schema(description = "Number of failed login attempts", example = "0")
+      private Integer failedLoginAttempts;
+
+      @Schema(description = "Account creation timestamp")
+      private java.time.LocalDateTime createdAt;
+
+      @Schema(description = "Account last update timestamp")
+      private java.time.LocalDateTime updatedAt;
 }
